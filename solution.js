@@ -29,17 +29,21 @@ function filter(data, predicate) {
   
     return result;
   }
-  
-  function duplateCustomers(transactions){
-    let temp = [];
-    let temp2 = [];
-    for(let i = 0; i < transactions.length; i++){
-      if(!temp.includes(transactions[i].emailAddress)){
-          temp.push(transactions[i].emailAddress)
-      }
-    }
-    return temp.length
+  function reduce(data, reducer, initialValue){
+        for (const item of data) {
+            initialValue = reducer(item, initialValue)
+          }
+        return initialValue;
   }
+  function pairIf(data1, data2, predicate){
+    paired = [];
+    for (const item of data1) {
+        for (const item of data2) {
+            initialValue = predicate(item, initialValue)
+          }
+      }
+  }
+
 
   //predicates
   function isBadPrice(transaction) {
@@ -55,13 +59,29 @@ function filter(data, predicate) {
  function isPriceOver200(transaction){
     return transaction.amount > 200;
  }
+ function tranactionSize(item, acc){
+    if (item.amount < 25) {
+      acc.small.push(item);
+    } else if (item.amount < 75) {
+      acc.medium.push(item);
+    } else {
+      acc.large.push(item);
+    }
+    return acc;
+ }
 
   
-  
+  const { small, medium, large } = reduce(transactions, tranactionSize, {small:[], medium:[], large:[]});
+  const smallFiltered = small.length - filter(small, isBadPrice).length - filter(small, isBadProduct).length;
+  const medFiltered = medium.length - filter(medium, isBadPrice).length - filter(medium, isBadProduct).length;
+  const largeFiltered = large.length - filter(large, isBadPrice).length - filter(large, isBadProduct).length;
   const badPrices = filter(transactions, isBadPrice);
   const badProducts = filter(transactions, isBadProduct);
   const invalidProducts = badPrices.length + badProducts.length;
   const lastOver200 = findlast(transactions, isPriceOver200);
   console.log("Number of invalid transactions: " + invalidProducts);
-  console.log("Number of duplicate customers: " + duplateCustomers(customers));
+  console.log("Number of duplicate customers: ");
   console.log("Most recent transaction over $200: $" + lastOver200.amount);
+  console.log("Number of small transactions: " + smallFiltered);
+  console.log("Number of medium transactions: " + medFiltered);
+  console.log("Number of large transactions: " + largeFiltered);
