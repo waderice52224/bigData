@@ -32,9 +32,10 @@ function filter(data, predicate) {
   
   function duplateCustomers(transactions){
     let temp = [];
+    let temp2 = [];
     for(let i = 0; i < transactions.length; i++){
-      if(!temp.includes(transactions[i])){
-        temp.push(transactions[i])
+      if(!temp.includes(transactions[i].emailAddress)){
+          temp.push(transactions[i].emailAddress)
       }
     }
     return temp.length
@@ -62,5 +63,5 @@ function filter(data, predicate) {
   const invalidProducts = badPrices.length + badProducts.length;
   const lastOver200 = findlast(transactions, isPriceOver200);
   console.log("Number of invalid transactions: " + invalidProducts);
-  console.log("Number of duplicate customers: " + duplateCustomers(transactions));
+  console.log("Number of duplicate customers: " + duplateCustomers(customers));
   console.log("Most recent transaction over $200: $" + lastOver200.amount);
